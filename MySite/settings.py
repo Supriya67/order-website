@@ -27,7 +27,7 @@ SECRET_KEY = 'st#z7sys2i*65e^#61*i8rzzni5m99+x6t&zz*_udkom3jvnz%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','spicekafee.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','.herokuapp.com']
 
 
 # Application definition
