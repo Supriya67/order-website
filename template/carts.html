@@ -1,0 +1,236 @@
+{% load cart %}
+
+{% load static %}
+
+{% load custom_filter %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/91018170e9.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'menu.css' %}">
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <title>SpiceKafee</title>
+    </head>
+    <style>
+        .cart_button{
+            color:orange;
+            border:2px solid orange
+        }
+        .cart_button:hover{
+            color:white;
+            background:orange;
+            border:orange;
+        }
+        .cart_length{
+        color:orange;
+        background:white;
+        padding:0px 5px;
+        margin:5px;
+        font-size:16px;
+        font-weight:bolder;
+        }
+    </style>
+    <body>
+        <!--==================================== navbar =============================-->
+        <nav class="nav">
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'product' %}">Menu</a></li>
+                <li><a href="{% url 'carts' %}">Cart</a>
+                    {% if request.session.cart.keys|length > 0%}
+                    <span class="cart_length">{{request.session.cart.keys|length}}</span>
+                    {% endif %}
+                </li>
+                {% if request.session.user_id %}
+                <li><a href="#">hello {{request.session.username}}!!</a></li>
+                <li><a href="{% url 'signout' %}">Orders</a></li>
+                <li><a href="{% url 'signout' %}">Sign Out</a></li>
+                {% else %}
+                <li><a href="{% url 'signin' %}">Sign in</a></li>
+                <li><a href="{% url 'signup' %}">sign up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!--==================================== navbar ends=============================-->
+        <div class="container-fluid mt-3">
+	        <div class="row">
+		    <!-- all products -->
+		    <div id='products' class="col-lg-12 mx-auto">
+                <div class="row mx-auto">
+				{% for i in products %}
+                    <div class="card mx-auto mb-3" id={{i.id}} style="width: 18rem;">
+                        <div class="image">
+                            <img src="{{i.image.url}}">
+                        </div>
+                        <div class="side-icon" >
+                        {%if i.category.name is "veg" %}
+                        <span><img class="veg-icon" src="https://img.icons8.com/color/48/26e07f/vegetarian-food-symbol.png"/></span>
+                         {% else %}
+                        <span><img class="veg-icon" src="https://img.icons8.com/color/48/26e07f/non-vegetarian-food-symbol.png"/></span>
+                         {% endif %}
+                        <span><h3 class="title-text1">{{i.name}}</h3></span>
+                        </div>
+                        <div class="side-text">
+                            <div class="text">
+                                <p>{{i.price|currency}}</p>
+                            </div>
+                        </div>
+                    <!--{{ i | is_in_cart:request.session.cart }}-->
+                        <div class="card-footer row no-gutters p-0">
+                            <form action="product"  class= col-2 method="post">
+                                {% csrf_token %}
+                                <input hidden  type="text" name ="product" value="{{i.id}}">
+                                <input hidden  type="text" name ="remove" value="True">
+                                <input type="submit" value=" - " class="btn btn-block btn-light">
+                            </form>
+                            <div class="text-center col">{{ i | cart_quantity:request.session.cart }} items added</div>
+                            <form action="product"  class= col-2 method="post">
+                                {% csrf_token %}
+                                <input hidden  type="text" name ="product" value="{{i.id}}">
+                                <input type="submit" value=" + " class="btn btn-block btn-light">
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="border rounded p-4 m-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sno.</th>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><img style="height: 100px;" class="square" src="{{product.image.url}}" alt=""></td>
+                        <td>{{product.name}}</td>
+                        <td>{{product.price|currency}}</td>
+                        <td>{{product|cart_quantity:request.session.cart}}</td>
+                        <td>{{product|total_price:request.session.cart|currency}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4"></th>
+                        <th class="" colspan="">Total</th>
+                        <th>{{products|total_cart_price:request.session.cart|currency}}</th>
+                    </tr>
+                </tfoot>
+            </table>
+                <hr>
+                <div class="m-3 p-3">
+                    <a href="#" data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-info border rounded  col-lg-3 float-right cart_button" >Check out</a>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                          Check Out Form
+                        </h5>
+                        <hr>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="m-2 p-3">
+                            <form action="/check-out" method="POST">
+                            {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="">Address</label>
+                                    <input type="text" name="address" id="" class="form-control" placeholder="" aria-describedby="helpId">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Phone</label>
+                                    <input type="text" name="phone" id="" class="form-control" placeholder="" aria-describedby="helpId">
+                                </div>
+                                <input type="submit" class="btn float-right btn-outline-info col-lg-6 cart_button" value="Check out">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </body>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+    <script>
+        const hamburger =  document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const links = document.querySelectorAll('.nav-links li');
+
+        hamburger.addEventListener('click', ()=>{
+            navLinks.classList.toggle('open');
+            links.forEach(links=>{
+                links.classList.toggle('fade');
+            });
+        });
+
+
+        const text = document.querySelector(".t-a-3");
+        const strText = text.textContent;
+        const splitText = strText.split("");
+        text.textContent="";
+        for(let i =0; i<splitText.length; i++)
+        {
+            text.innerHTML += "<span>" + splitText[i] + "</span>";
+        }
+        let char=0;
+        let timer = setInterval(onTick, 50);
+        function onTick()
+        {
+            const span = text.querySelectorAll('span')[char];
+            span.classList.add('fade');
+            char++;
+            if(char === splitText.length)
+            {
+                complete();
+                return;
+            }
+        }
+        function complete()
+        {
+            setInterval(timer);
+            timer=50;
+        }
+    </script>
+</html>
+

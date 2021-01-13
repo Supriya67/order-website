@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SignUp</title>
+		<link rel="stylesheet" href="{% static 'signup.css' %}">
+    </head>
+    <style>
+        .cart_length{
+        color:orange;
+        background:white;
+        padding:0px 5px;
+        margin:5px;
+        font-size:16px;
+        font-weight:bolder;
+        }
+    </style>
+    <body>
+        <button id="btn-nav">☰</button>
+        <nav id="nav">
+            <ul>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'product' %}">Menu</a></li>
+                <li><a href="{% url 'carts' %}">Cart</a>
+                    {% if request.session.cart.keys|length > 0%}
+                    <span class="cart_length">{{request.session.cart.keys|length}}</span>
+                    {% endif %}
+                </li>
+                <li><a href="{% url 'signin' %}">Sign In</a></li>
+            </ul>
+        </nav>
+        <div class="regform"><h1>Sign Up</h1></div>
+        <div class="main">
+            <form action="signup" method="post">
+                {% csrf_token %}
+                {% if error_msg %}
+                <div class="alert alert-danger" role="alert">
+                    <h1>{{error_msg}}</h1>
+                </div>
+                {% endif %}
+                <div id="name">
+                    <h2 class="name">name</h2>
+                    <input class="firstname" type="text" name="first_name" placeholder="first name" autocomplete="off" required value={{value.first_name}}  ><br>
+                    <input class="lastname" type="text" name="last_name" placeholder="last name" autocomplete="off" required value={{value.last_name}}  >
+                </div>
+
+                <h2 class="email">Email</h2>
+				<input class="emailaddress" type="email" name="email" placeholder="email address...." autocomplete="off" required value={{value.email}} >
+				
+				<h2 class="username">Username</h2>
+                <input class="Username" type="text" name="username" placeholder="username...."  autocomplete="off" required value={{value.username}}>
+
+                <h2 class="phone">Phone</h2>
+                <input class="phone1" type="text" name="phone1" placeholder="phone no." required autocomplete="off" value={{value.phone1}}  ><br>
+                <input class="phone2" type="text" name="phone2" placeholder="alternate no." autocomplete="off" value={{value.phone2}}  >
+                <h2 class="address">Address</h2>
+                <input class="homeaddress" type="text" name="address" placeholder="manual address" autocomplete="off" required value={{value.address}}  >
+                <h2 class="password">Password</h2>
+                <input class="password1" type="password" name="password" placeholder="password" autocomplete="off" required><br>
+                <input class="password2" type="password" name="password2" placeholder="re-type password" autocomplete="off" required>
+                <button class="signupbutton" type="submit">SignUp</button>
+            </form>
+        </div>
+    </body>
+    <script>
+        const btn = document.getElementById("btn-nav");
+        const nav = document.getElementById("nav");
+
+        btn.addEventListener("click", () => {
+        nav.classList.toggle("active");
+        btn.classList.toggle("active");
+        });
+    </script>
+</html>       

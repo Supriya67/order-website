@@ -1,0 +1,558 @@
+{% load static %}
+{% load cart %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SpiceKafee</title>
+        <link rel="stylesheet" href="{% static 'main.css' %}">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/91018170e9.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+        <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <style>
+        .cart_length{
+        color:orange;
+        background:white;
+        padding:0px 5px;
+        margin:5px;
+        font-size:16px;
+        font-weight:bolder;
+
+    }
+    </style>
+    <body>
+        <!--===============================nav bar=============================================-->
+        <nav>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="{% url 'product' %}">Menu</a></li>
+                <li><a href="{% url 'carts' %}">Cart</a>
+                    {% if request.session.cart.keys|length > 0%}
+                    <span class="cart_length">{{request.session.cart.keys|length}}</span>
+                    {% endif %}
+                </li>
+                {% if request.session.user_id %}
+                <li><a href="#">hello {{request.session.username}}!!</a></li>
+                <li><a href="{% url 'order' %}">Orders</a></li>
+                <li><a href="{% url 'signout' %}">Sign Out</a></li>
+                {% else %}
+                <li><a href="{% url 'signin' %}">Sign In</a></li>
+                <li><a href="{% url 'signup' %}">sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!--===============================end of nav bar============================================-->
+        <!--=================================header start============================================-->
+        <header class="header">
+            <div class="hero">
+                <h1 class="title">SpiceKafee</h1>
+                    <svg id="logo1" width="800" height="159" viewBox="0 0 800 159" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <mask id="path-1-outside-1" maskUnits="userSpaceOnUse" x="-0.791992" y="0.984009" width="801" height="158" fill="black">
+                            <rect fill="white" x="-0.791992" y="0.984009" width="801" height="158"/>
+                            <path d="M39.912 117.008C33.288 117.008 27.336 115.856 22.056 113.552C16.872 111.152 12.792 107.888 9.81601 103.76C6.84001 99.536 5.30401 94.688 5.20801 89.216H19.176C19.656 93.92 21.576 97.904 24.936 101.168C28.392 104.336 33.384 105.92 39.912 105.92C46.152 105.92 51.048 104.384 54.6 101.312C58.248 98.144 60.072 94.112 60.072 89.216C60.072 85.376 59.016 82.256 56.904 79.856C54.792 77.456 52.152 75.632 48.984 74.384C45.816 73.136 41.544 71.792 36.168 70.352C29.544 68.624 24.216 66.896 20.184 65.168C16.248 63.44 12.84 60.752 9.96001 57.104C7.17601 53.36 5.78401 48.368 5.78401 42.128C5.78401 36.656 7.17601 31.808 9.96001 27.584C12.744 23.36 16.632 20.096 21.624 17.792C26.712 15.488 32.52 14.336 39.048 14.336C48.456 14.336 56.136 16.688 62.088 21.392C68.136 26.096 71.544 32.336 72.312 40.112H57.912C57.432 36.272 55.416 32.912 51.864 30.032C48.312 27.056 43.608 25.568 37.752 25.568C32.28 25.568 27.816 27.008 24.36 29.888C20.904 32.672 19.176 36.608 19.176 41.696C19.176 45.344 20.184 48.32 22.2 50.624C24.312 52.928 26.856 54.704 29.832 55.952C32.904 57.104 37.176 58.448 42.648 59.984C49.272 61.808 54.6 63.632 58.632 65.456C62.664 67.184 66.12 69.92 69 73.664C71.88 77.312 73.32 82.304 73.32 88.64C73.32 93.536 72.024 98.144 69.432 102.464C66.84 106.784 63 110.288 57.912 112.976C52.824 115.664 46.824 117.008 39.912 117.008Z"/>
+                            <path d="M105.708 51.632C108.3 47.12 112.14 43.376 117.228 40.4C122.412 37.328 128.412 35.792 135.228 35.792C142.236 35.792 148.572 37.472 154.236 40.832C159.996 44.192 164.508 48.944 167.772 55.088C171.036 61.136 172.668 68.192 172.668 76.256C172.668 84.224 171.036 91.328 167.772 97.568C164.508 103.808 159.996 108.656 154.236 112.112C148.572 115.568 142.236 117.296 135.228 117.296C128.508 117.296 122.556 115.808 117.372 112.832C112.284 109.76 108.396 105.968 105.708 101.456V153.44H92.6036V37.088H105.708V51.632ZM159.276 76.256C159.276 70.304 158.076 65.12 155.676 60.704C153.276 56.288 150.012 52.928 145.884 50.624C141.852 48.32 137.388 47.168 132.492 47.168C127.692 47.168 123.228 48.368 119.1 50.768C115.068 53.072 111.804 56.48 109.308 60.992C106.908 65.408 105.708 70.544 105.708 76.4C105.708 82.352 106.908 87.584 109.308 92.096C111.804 96.512 115.068 99.92 119.1 102.32C123.228 104.624 127.692 105.776 132.492 105.776C137.388 105.776 141.852 104.624 145.884 102.32C150.012 99.92 153.276 96.512 155.676 92.096C158.076 87.584 159.276 82.304 159.276 76.256Z"/>
+                            <path d="M196.684 24.272C194.188 24.272 192.076 23.408 190.348 21.68C188.62 19.952 187.756 17.84 187.756 15.344C187.756 12.848 188.62 10.736 190.348 9.00801C192.076 7.28001 194.188 6.41601 196.684 6.41601C199.084 6.41601 201.1 7.28001 202.732 9.00801C204.46 10.736 205.324 12.848 205.324 15.344C205.324 17.84 204.46 19.952 202.732 21.68C201.1 23.408 199.084 24.272 196.684 24.272ZM203.02 37.088V116H189.916V37.088H203.02Z"/>
+                            <path d="M220.458 76.4C220.458 68.24 222.09 61.136 225.354 55.088C228.618 48.944 233.13 44.192 238.89 40.832C244.746 37.472 251.418 35.792 258.906 35.792C268.602 35.792 276.57 38.144 282.81 42.848C289.146 47.552 293.322 54.08 295.338 62.432H281.226C279.882 57.632 277.242 53.84 273.306 51.056C269.466 48.272 264.666 46.88 258.906 46.88C251.418 46.88 245.37 49.472 240.762 54.656C236.154 59.744 233.85 66.992 233.85 76.4C233.85 85.904 236.154 93.248 240.762 98.432C245.37 103.616 251.418 106.208 258.906 106.208C264.666 106.208 269.466 104.864 273.306 102.176C277.146 99.488 279.786 95.648 281.226 90.656H295.338C293.226 98.72 289.002 105.2 282.666 110.096C276.33 114.896 268.41 117.296 258.906 117.296C251.418 117.296 244.746 115.616 238.89 112.256C233.13 108.896 228.618 104.144 225.354 98C222.09 91.856 220.458 84.656 220.458 76.4Z"/>
+                            <path d="M384.822 73.52C384.822 76.016 384.678 78.656 384.39 81.44H321.318C321.798 89.216 324.438 95.312 329.238 99.728C334.134 104.048 340.038 106.208 346.95 106.208C352.614 106.208 357.318 104.912 361.062 102.32C364.902 99.632 367.59 96.08 369.126 91.664H383.238C381.126 99.248 376.902 105.44 370.566 110.24C364.23 114.944 356.358 117.296 346.95 117.296C339.462 117.296 332.742 115.616 326.79 112.256C320.934 108.896 316.326 104.144 312.966 98C309.606 91.76 307.926 84.56 307.926 76.4C307.926 68.24 309.558 61.088 312.822 54.944C316.086 48.8 320.646 44.096 326.502 40.832C332.454 37.472 339.27 35.792 346.95 35.792C354.438 35.792 361.062 37.424 366.822 40.688C372.582 43.952 376.998 48.464 380.07 54.224C383.238 59.888 384.822 66.32 384.822 73.52ZM371.286 70.784C371.286 65.792 370.182 61.52 367.974 57.968C365.766 54.32 362.742 51.584 358.902 49.76C355.158 47.84 350.982 46.88 346.374 46.88C339.75 46.88 334.086 48.992 329.382 53.216C324.774 57.44 322.134 63.296 321.462 70.784H371.286Z"/>
+                            <path d="M456.551 116L415.223 70.208V116H402.119V15.632H415.223V62.144L456.695 15.632H473.255L427.751 65.888L473.687 116H456.551Z"/>
+                            <path d="M483.426 76.256C483.426 68.192 485.058 61.136 488.322 55.088C491.586 48.944 496.05 44.192 501.714 40.832C507.474 37.472 513.858 35.792 520.866 35.792C527.778 35.792 533.778 37.28 538.866 40.256C543.954 43.232 547.746 46.976 550.242 51.488V37.088H563.49V116H550.242V101.312C547.65 105.92 543.762 109.76 538.578 112.832C533.49 115.808 527.538 117.296 520.722 117.296C513.714 117.296 507.378 115.568 501.714 112.112C496.05 108.656 491.586 103.808 488.322 97.568C485.058 91.328 483.426 84.224 483.426 76.256ZM550.242 76.4C550.242 70.448 549.042 65.264 546.642 60.848C544.242 56.432 540.978 53.072 536.85 50.768C532.818 48.368 528.354 47.168 523.458 47.168C518.562 47.168 514.098 48.32 510.066 50.624C506.034 52.928 502.818 56.288 500.418 60.704C498.018 65.12 496.818 70.304 496.818 76.256C496.818 82.304 498.018 87.584 500.418 92.096C502.818 96.512 506.034 99.92 510.066 102.32C514.098 104.624 518.562 105.776 523.458 105.776C528.354 105.776 532.818 104.624 536.85 102.32C540.978 99.92 544.242 96.512 546.642 92.096C549.042 87.584 550.242 82.352 550.242 76.4Z"/>
+                            <path d="M617.747 47.888H601.187V116H588.083V47.888H577.859V37.088H588.083V31.472C588.083 22.64 590.339 16.208 594.851 12.176C599.459 8.04801 606.803 5.98401 616.883 5.98401V16.928C611.123 16.928 607.043 18.08 604.643 20.384C602.339 22.592 601.187 26.288 601.187 31.472V37.088H617.747V47.888Z"/>
+                            <path d="M705.026 73.52C705.026 76.016 704.882 78.656 704.594 81.44H641.521C642.001 89.216 644.642 95.312 649.442 99.728C654.338 104.048 660.242 106.208 667.154 106.208C672.818 106.208 677.522 104.912 681.266 102.32C685.106 99.632 687.794 96.08 689.33 91.664H703.442C701.33 99.248 697.106 105.44 690.77 110.24C684.434 114.944 676.562 117.296 667.154 117.296C659.666 117.296 652.946 115.616 646.994 112.256C641.138 108.896 636.529 104.144 633.169 98C629.809 91.76 628.13 84.56 628.13 76.4C628.13 68.24 629.762 61.088 633.026 54.944C636.29 48.8 640.85 44.096 646.706 40.832C652.658 37.472 659.474 35.792 667.154 35.792C674.642 35.792 681.266 37.424 687.026 40.688C692.786 43.952 697.201 48.464 700.273 54.224C703.441 59.888 705.026 66.32 705.026 73.52ZM691.49 70.784C691.49 65.792 690.385 61.52 688.177 57.968C685.969 54.32 682.946 51.584 679.106 49.76C675.362 47.84 671.186 46.88 666.578 46.88C659.954 46.88 654.29 48.992 649.586 53.216C644.978 57.44 642.338 63.296 641.666 70.784H691.49Z"/>
+                            <path d="M794.322 73.52C794.322 76.016 794.178 78.656 793.89 81.44H730.818C731.298 89.216 733.938 95.312 738.738 99.728C743.634 104.048 749.538 106.208 756.45 106.208C762.114 106.208 766.818 104.912 770.562 102.32C774.402 99.632 777.09 96.08 778.626 91.664H792.738C790.626 99.248 786.402 105.44 780.066 110.24C773.73 114.944 765.858 117.296 756.45 117.296C748.962 117.296 742.242 115.616 736.29 112.256C730.434 108.896 725.826 104.144 722.466 98C719.106 91.76 717.426 84.56 717.426 76.4C717.426 68.24 719.058 61.088 722.322 54.944C725.586 48.8 730.146 44.096 736.002 40.832C741.954 37.472 748.77 35.792 756.45 35.792C763.938 35.792 770.562 37.424 776.322 40.688C782.082 43.952 786.498 48.464 789.57 54.224C792.738 59.888 794.322 66.32 794.322 73.52ZM780.786 70.784C780.786 65.792 779.682 61.52 777.474 57.968C775.266 54.32 772.242 51.584 768.402 49.76C764.658 47.84 760.482 46.88 755.874 46.88C749.25 46.88 743.586 48.992 738.882 53.216C734.274 57.44 731.634 63.296 730.962 70.784H780.786Z"/>
+                            </mask>
+                            <path d="M39.912 117.008C33.288 117.008 27.336 115.856 22.056 113.552C16.872 111.152 12.792 107.888 9.81601 103.76C6.84001 99.536 5.30401 94.688 5.20801 89.216H19.176C19.656 93.92 21.576 97.904 24.936 101.168C28.392 104.336 33.384 105.92 39.912 105.92C46.152 105.92 51.048 104.384 54.6 101.312C58.248 98.144 60.072 94.112 60.072 89.216C60.072 85.376 59.016 82.256 56.904 79.856C54.792 77.456 52.152 75.632 48.984 74.384C45.816 73.136 41.544 71.792 36.168 70.352C29.544 68.624 24.216 66.896 20.184 65.168C16.248 63.44 12.84 60.752 9.96001 57.104C7.17601 53.36 5.78401 48.368 5.78401 42.128C5.78401 36.656 7.17601 31.808 9.96001 27.584C12.744 23.36 16.632 20.096 21.624 17.792C26.712 15.488 32.52 14.336 39.048 14.336C48.456 14.336 56.136 16.688 62.088 21.392C68.136 26.096 71.544 32.336 72.312 40.112H57.912C57.432 36.272 55.416 32.912 51.864 30.032C48.312 27.056 43.608 25.568 37.752 25.568C32.28 25.568 27.816 27.008 24.36 29.888C20.904 32.672 19.176 36.608 19.176 41.696C19.176 45.344 20.184 48.32 22.2 50.624C24.312 52.928 26.856 54.704 29.832 55.952C32.904 57.104 37.176 58.448 42.648 59.984C49.272 61.808 54.6 63.632 58.632 65.456C62.664 67.184 66.12 69.92 69 73.664C71.88 77.312 73.32 82.304 73.32 88.64C73.32 93.536 72.024 98.144 69.432 102.464C66.84 106.784 63 110.288 57.912 112.976C52.824 115.664 46.824 117.008 39.912 117.008Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M105.708 51.632C108.3 47.12 112.14 43.376 117.228 40.4C122.412 37.328 128.412 35.792 135.228 35.792C142.236 35.792 148.572 37.472 154.236 40.832C159.996 44.192 164.508 48.944 167.772 55.088C171.036 61.136 172.668 68.192 172.668 76.256C172.668 84.224 171.036 91.328 167.772 97.568C164.508 103.808 159.996 108.656 154.236 112.112C148.572 115.568 142.236 117.296 135.228 117.296C128.508 117.296 122.556 115.808 117.372 112.832C112.284 109.76 108.396 105.968 105.708 101.456V153.44H92.6036V37.088H105.708V51.632ZM159.276 76.256C159.276 70.304 158.076 65.12 155.676 60.704C153.276 56.288 150.012 52.928 145.884 50.624C141.852 48.32 137.388 47.168 132.492 47.168C127.692 47.168 123.228 48.368 119.1 50.768C115.068 53.072 111.804 56.48 109.308 60.992C106.908 65.408 105.708 70.544 105.708 76.4C105.708 82.352 106.908 87.584 109.308 92.096C111.804 96.512 115.068 99.92 119.1 102.32C123.228 104.624 127.692 105.776 132.492 105.776C137.388 105.776 141.852 104.624 145.884 102.32C150.012 99.92 153.276 96.512 155.676 92.096C158.076 87.584 159.276 82.304 159.276 76.256Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M196.684 24.272C194.188 24.272 192.076 23.408 190.348 21.68C188.62 19.952 187.756 17.84 187.756 15.344C187.756 12.848 188.62 10.736 190.348 9.00801C192.076 7.28001 194.188 6.41601 196.684 6.41601C199.084 6.41601 201.1 7.28001 202.732 9.00801C204.46 10.736 205.324 12.848 205.324 15.344C205.324 17.84 204.46 19.952 202.732 21.68C201.1 23.408 199.084 24.272 196.684 24.272ZM203.02 37.088V116H189.916V37.088H203.02Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M220.458 76.4C220.458 68.24 222.09 61.136 225.354 55.088C228.618 48.944 233.13 44.192 238.89 40.832C244.746 37.472 251.418 35.792 258.906 35.792C268.602 35.792 276.57 38.144 282.81 42.848C289.146 47.552 293.322 54.08 295.338 62.432H281.226C279.882 57.632 277.242 53.84 273.306 51.056C269.466 48.272 264.666 46.88 258.906 46.88C251.418 46.88 245.37 49.472 240.762 54.656C236.154 59.744 233.85 66.992 233.85 76.4C233.85 85.904 236.154 93.248 240.762 98.432C245.37 103.616 251.418 106.208 258.906 106.208C264.666 106.208 269.466 104.864 273.306 102.176C277.146 99.488 279.786 95.648 281.226 90.656H295.338C293.226 98.72 289.002 105.2 282.666 110.096C276.33 114.896 268.41 117.296 258.906 117.296C251.418 117.296 244.746 115.616 238.89 112.256C233.13 108.896 228.618 104.144 225.354 98C222.09 91.856 220.458 84.656 220.458 76.4Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M384.822 73.52C384.822 76.016 384.678 78.656 384.39 81.44H321.318C321.798 89.216 324.438 95.312 329.238 99.728C334.134 104.048 340.038 106.208 346.95 106.208C352.614 106.208 357.318 104.912 361.062 102.32C364.902 99.632 367.59 96.08 369.126 91.664H383.238C381.126 99.248 376.902 105.44 370.566 110.24C364.23 114.944 356.358 117.296 346.95 117.296C339.462 117.296 332.742 115.616 326.79 112.256C320.934 108.896 316.326 104.144 312.966 98C309.606 91.76 307.926 84.56 307.926 76.4C307.926 68.24 309.558 61.088 312.822 54.944C316.086 48.8 320.646 44.096 326.502 40.832C332.454 37.472 339.27 35.792 346.95 35.792C354.438 35.792 361.062 37.424 366.822 40.688C372.582 43.952 376.998 48.464 380.07 54.224C383.238 59.888 384.822 66.32 384.822 73.52ZM371.286 70.784C371.286 65.792 370.182 61.52 367.974 57.968C365.766 54.32 362.742 51.584 358.902 49.76C355.158 47.84 350.982 46.88 346.374 46.88C339.75 46.88 334.086 48.992 329.382 53.216C324.774 57.44 322.134 63.296 321.462 70.784H371.286Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M456.551 116L415.223 70.208V116H402.119V15.632H415.223V62.144L456.695 15.632H473.255L427.751 65.888L473.687 116H456.551Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M483.426 76.256C483.426 68.192 485.058 61.136 488.322 55.088C491.586 48.944 496.05 44.192 501.714 40.832C507.474 37.472 513.858 35.792 520.866 35.792C527.778 35.792 533.778 37.28 538.866 40.256C543.954 43.232 547.746 46.976 550.242 51.488V37.088H563.49V116H550.242V101.312C547.65 105.92 543.762 109.76 538.578 112.832C533.49 115.808 527.538 117.296 520.722 117.296C513.714 117.296 507.378 115.568 501.714 112.112C496.05 108.656 491.586 103.808 488.322 97.568C485.058 91.328 483.426 84.224 483.426 76.256ZM550.242 76.4C550.242 70.448 549.042 65.264 546.642 60.848C544.242 56.432 540.978 53.072 536.85 50.768C532.818 48.368 528.354 47.168 523.458 47.168C518.562 47.168 514.098 48.32 510.066 50.624C506.034 52.928 502.818 56.288 500.418 60.704C498.018 65.12 496.818 70.304 496.818 76.256C496.818 82.304 498.018 87.584 500.418 92.096C502.818 96.512 506.034 99.92 510.066 102.32C514.098 104.624 518.562 105.776 523.458 105.776C528.354 105.776 532.818 104.624 536.85 102.32C540.978 99.92 544.242 96.512 546.642 92.096C549.042 87.584 550.242 82.352 550.242 76.4Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M617.747 47.888H601.187V116H588.083V47.888H577.859V37.088H588.083V31.472C588.083 22.64 590.339 16.208 594.851 12.176C599.459 8.04801 606.803 5.98401 616.883 5.98401V16.928C611.123 16.928 607.043 18.08 604.643 20.384C602.339 22.592 601.187 26.288 601.187 31.472V37.088H617.747V47.888Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M705.026 73.52C705.026 76.016 704.882 78.656 704.594 81.44H641.521C642.001 89.216 644.642 95.312 649.442 99.728C654.338 104.048 660.242 106.208 667.154 106.208C672.818 106.208 677.522 104.912 681.266 102.32C685.106 99.632 687.794 96.08 689.33 91.664H703.442C701.33 99.248 697.106 105.44 690.77 110.24C684.434 114.944 676.562 117.296 667.154 117.296C659.666 117.296 652.946 115.616 646.994 112.256C641.138 108.896 636.529 104.144 633.169 98C629.809 91.76 628.13 84.56 628.13 76.4C628.13 68.24 629.762 61.088 633.026 54.944C636.29 48.8 640.85 44.096 646.706 40.832C652.658 37.472 659.474 35.792 667.154 35.792C674.642 35.792 681.266 37.424 687.026 40.688C692.786 43.952 697.201 48.464 700.273 54.224C703.441 59.888 705.026 66.32 705.026 73.52ZM691.49 70.784C691.49 65.792 690.385 61.52 688.177 57.968C685.969 54.32 682.946 51.584 679.106 49.76C675.362 47.84 671.186 46.88 666.578 46.88C659.954 46.88 654.29 48.992 649.586 53.216C644.978 57.44 642.338 63.296 641.666 70.784H691.49Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                            <path d="M794.322 73.52C794.322 76.016 794.178 78.656 793.89 81.44H730.818C731.298 89.216 733.938 95.312 738.738 99.728C743.634 104.048 749.538 106.208 756.45 106.208C762.114 106.208 766.818 104.912 770.562 102.32C774.402 99.632 777.09 96.08 778.626 91.664H792.738C790.626 99.248 786.402 105.44 780.066 110.24C773.73 114.944 765.858 117.296 756.45 117.296C748.962 117.296 742.242 115.616 736.29 112.256C730.434 108.896 725.826 104.144 722.466 98C719.106 91.76 717.426 84.56 717.426 76.4C717.426 68.24 719.058 61.088 722.322 54.944C725.586 48.8 730.146 44.096 736.002 40.832C741.954 37.472 748.77 35.792 756.45 35.792C763.938 35.792 770.562 37.424 776.322 40.688C782.082 43.952 786.498 48.464 789.57 54.224C792.738 59.888 794.322 66.32 794.322 73.52ZM780.786 70.784C780.786 65.792 779.682 61.52 777.474 57.968C775.266 54.32 772.242 51.584 768.402 49.76C764.658 47.84 760.482 46.88 755.874 46.88C749.25 46.88 743.586 48.992 738.882 53.216C734.274 57.44 731.634 63.296 730.962 70.784H780.786Z" stroke="#FFFBFB" stroke-width="10" mask="url(#path-1-outside-1)"/>
+                        </svg>
+                <a href="#" class="hero-button pulsate">welcome</a>
+            </div>
+        </header>
+        <!--==============================================header ends===========================================-->
+        <!----===========================================menu cards section=====================================--->
+        <section id="food-spec">
+            <div class="food-container-spec">
+                <!--article-->
+                <article class="food-card-spec">
+                    <img src="{%static 'images/or-5.jpg' %}" class="food-img-spec" alt="">
+                    <div class="img-text-spec">
+                        <h1>Starters</h1>
+                    </div>
+                    <div class="img-footer-spec">
+                        <div class="footer-icon">
+                            <i></i>
+                        </div>
+                        <div class="footer-btn-spec">
+                            <a href="product?category=1" style="text-decoration:none;"><button type="button" class="food-btn-spec">Menu</button></a>
+                        </div>
+                    </div>
+                </article>
+                <!--end of article-->
+                <!--article-->
+                <article class="food-card-spec">
+                    <img src="{%static 'images/mc-1.jpg' %}" class="food-img" alt="">
+                    <div class="img-text-spec">
+                        <h1>Main Course</h1>
+                    </div>
+                    <div class="img-footer-spec">
+                        <div class="footer-icon">
+                            <i></i>
+                        </div>
+                        <div class="footer-btn-spec">
+                            <a href="product?category=6" style="text-decoration:none;"><button type="button" class="food-btn-spec">Menu</button></a>
+                        </div>
+                    </div>
+                </article>
+                <!--end of article-->
+                <!----article----->
+                <article class="food-card-spec">
+                    <img src="{%static 'images/or-4.jpg' %}" class="food-img-spec" alt="">
+                    <div class="img-text-spec">
+                        <h1>Dessert</h1>
+                    </div>
+                    <div class="img-footer-spec">
+                        <div class="footer-icon">
+                            <i></i>
+                        </div>
+                        <div class="footer-btn-spec">
+                            <a href="product?category=9" style="text-decoration:none;"><button  type="submit" class="food-btn-spec">Menu</button></a>
+                        </div>
+                    </div>
+                </article>
+                <!--end of article-->
+            </div>
+        </section>
+        <!---===========================================end of menu cards section======================================-->
+        <!--===============================================our specilality==============================================-->
+        <section class="container-fluid mt-3">
+            <div class="heading-text">
+                <h1>Best Seller</h1>
+            </div>
+            <div class="row">
+		<!-- all products -->
+		<div id='product' class="col-lg-10 mx-auto">
+			<div class="row mx-auto">
+				{% for i in product %}
+                {% if i.bestseller %}
+				<div class="card mx-auto mb-2" id={{i.id}} style="width: 15rem; ">
+                    <div class="image">
+                        <img src="{{i.image.url}}">
+                     </div>
+                     <div class="side-icon" >
+                         {%if i.veg %}
+                        <span><img class="veg-icon" src="https://img.icons8.com/color/48/26e07f/vegetarian-food-symbol.png"/></span>
+                         {% else %}
+                        <span><img class="veg-icon" src="https://img.icons8.com/color/48/26e07f/non-vegetarian-food-symbol.png"/></span>
+                         {% endif %}
+                        <span><h3 class="title-text1">{{i.name}}</h3></span>
+                     </div>
+                    <div class="side-text">
+                        <div class="text">
+                            <p><i class="fa fa-inr"></i>{{i.price}}/-</p>
+                        </div>
+                        <form action="/#{{i.id}}" method="post">
+                            {% csrf_token %}
+                            <div class="button-menu">
+                                <input hidden type="text" name ="product" value="{{i.id}}">
+                                {% if i|is_in_cart:request.session.cart %}
+                                <button type="submit" style="font-size:10px">Go to Cart</button>
+                                {% else %}
+                                <button type="submit">order</button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                  </div>
+                {% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</section>
+        <!---=======================================================our specilality ends==========================================================-->
+        <!----======================================================menu bar starts===============================================================-->
+        <section class="menu" id="menu about">
+            <article class="menu-image">
+                <video id="videoBG" poster="{%static 'images/dine-in2.jpg' %}" autoplay muted loop>
+                    <source src="{%static 'videos/video5.mp4' %}" type="video/mp4">
+                </video>
+            </article>
+            <article class="menu-text">
+                <div class="menu-text-center">
+                    <h1>Our story</h1>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing
+                        elit. Eum, blanditiis cum quasi animi, amet a, itaque
+                         architecto consequatur sed dolores nisi impedit est
+                         facere quam. Totam autem assumenda commodi numquam.
+                         elit. Eum, blanditiis cum quasi animi, amet a, itaque
+                         architecto consequatur sed dolores nisi impedit est
+                         facere quam. Totam autem assumenda commodi numquam.
+                    </p>
+                    <a href="#">explore more</a>
+                </div>
+            </article>
+        </section>
+        <!--================================================menu bar ends================================================-->
+        <!---=============================================today's special===============================================---->
+        <section class="container">
+            <div class="heading-text">
+                <h1>Today's offer</h1>
+            </div>
+            <div class="row">
+		<!-- all products -->
+		<div id='product' class="col-lg-12 mx-auto">
+			<div class="row mx-auto">
+				{% for i in product %}
+                {% if i.bestseller %}
+				<div class="card mx-auto mb-3" id={{i.id}} style="width: 18rem;">
+                    <div class="image">
+                        <img src="{{i.image.url}}">
+                     </div>
+                     <div class="side-icon" >
+                         {%if i.veg %}
+                        <span><img class="veg-icon" src="https://img.icons8.com/color/48/26e07f/vegetarian-food-symbol.png"/></span>
+                         {% else %}
+                        <span><img class="veg-icon" src="https://img.icons8.com/color/48/26e07f/non-vegetarian-food-symbol.png"/></span>
+                         {% endif %}
+                        <span><h3 class="title-text1">{{i.name}}</h3></span>
+                     </div>
+                    <div class="side-text">
+                        <div class="text">
+                            <p><i class="fa fa-inr"></i>{{i.price}}/-</p>
+                        </div>
+                        <form action="/#{{i.id}}" method="post">
+                            {% csrf_token %}
+                            <div class="button-menu">
+                                <input hidden type="text" name ="product" value="{{i.id}}">
+                                {% if i|is_in_cart:request.session.cart %}
+                                <button type="submit" style="font-size:10px">Go to Cart</button>
+                                {% else %}
+                                <button type="submit">order</button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                  </div>
+                {% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+        </section>
+        <!----===================================================today's special ends=================================================-->
+        <!------=================================================-flipcard starts====================================================--->
+        <section id="container-flip">
+            <div class="row">
+            <!--article-->
+            <article  class="container-flip">
+                <div class="card-container-flip">
+                    <div class="card-flip">
+                        <figure class="front" id="e">
+                                <h1>soups</h1>
+                        </figure>
+                        <figure class="back">
+                            <ul>
+                                <li>basil tomato soup</li>
+                                <li>mix veg soup</li>
+                                <li>carrot ginger soup</li>
+                                <li>baby corn soup</li>
+                                <li>broccli mushroom soup</li>
+                                <li>veg manchow soup</li>
+                                <li>mexican soup</li>
+                                <li>Turnip and Zucchini soup</li>
+                                <li>Chicken Manchow soup</li>
+                                <li>Chicken Thukpa</li>
+                                <li>prawn potato soup</li>
+                            </ul>
+                        </figure>
+                    </div>
+                </div>
+            </article>
+            <!--end of article-->
+            <!--article-->
+             <article class="container-flip">
+                <div class="card-container-flip">
+                    <div class="card-flip">
+                        <figure class="front"  id="a">
+                                    <h1>Starters</h1>
+                        </figure>
+                        <figure class="back">
+                            <ul>
+                                <li>peri peri fries</li>
+                                <li>paneer tikka</li>
+                                <li>chikken tikka</li>
+                                <li>cajun potato</li>
+                                <li>crispy corn</li>
+                                <li>Soya chilli chicken</li>
+                                <li>tandoori chaap</li>
+                                <li>chilli cheese toast</li>
+                                <li>spring rolls</li>
+                                <li>chilli paneer</li>
+                                <li>momos</li>
+                            </ul>
+                        </figure>
+                    </div>
+                </div>
+            </article>
+            <!--end of article-->
+            <!--article-->
+            <article  class="container-flip">
+                <div class="card-container-flip">
+                    <div class="card-flip">
+                        <figure class="front"  id="b">
+                                    <h1>veg menu</h1>
+                        </figure>
+                        <figure class="back">
+                            <ul>
+                                <li>malai kofta</li>
+                                <li>veg manchurian</li>
+                                <li>paneer butter masala</li>
+                                <li>sahi paneer</li>
+                                <li>matar paneer</li>
+                                <li>dal makhni</li>
+                                <li>veg kohla puri</li>
+                                <li>rajma curry</li>
+                                <li>Mushroom masala</li>
+                                <li>veg handi biryani</li>
+                                <li>chilly garlic noodles</li>   
+                            </ul>
+                        </figure>
+                    </div>
+                </div>
+            </article>
+            <!--end of article-->
+            <!--article-->
+            <article  class="container-flip">
+                <div class="card-container-flip">
+                    <div class="card-flip">
+                        <figure class="front"  id="c">
+                                <h1>non-veg menu</h1>
+                        </figure>
+                        <figure class="back">
+                            <ul>
+                                <li>malai prawns</li>
+                                <li>achari chicken</li>
+                                <li>Doi llish</li>
+                                <li>llish Bhappa</li>
+                                <li>chicken chap</li>
+                                <li>achari chicken</li>
+                                <li>chicken makhani</li>
+                                <li>chilli chicken</li>
+                                <li>mutton masala</li>
+                                <li>handi chicken</li>
+                                <li>chicken dum biryani</li> 
+                            </ul>
+                        </figure>
+                    </div>
+                </div>
+            </article>
+            <!--end of article-->
+            <!--article-->
+            <article  class="container-flip">
+                <div class="card-container-flip">
+                    <div class="card-flip">
+                        <figure class="front"  id="d">
+                                <h1>dessert</h1>
+                        </figure>
+                        <figure class="back">
+                            <ul>
+                                <li>gulab jamun</li>
+                                <li>moong daal halwa</li>
+                                <li>gajar halwa</li>
+                                <li>fruit kulfi</li>
+                                <li>lemon tart</li>
+                                <li>oreo truffle</li>
+                                <li>cupcake</li>
+                                <li>cake</li>
+                                <li>chocolate dome</li>
+                                <li>apple pie</li>
+                                <li>pastries</li>
+                            </ul>
+                        </figure>
+                    </div>
+                </div>
+            </article>
+            <!--end of article-->
+            </div>
+        </section>
+        <!--===============================================-flipcard section ends=========================================-->
+        <!---==================================================---card section============================================--->
+        <!--<section id="food">
+            <div class="heading-text">
+                <h1>order your meal</h1>
+            </div>
+            <div class="food-container">
+                
+                 <article class="food-card">
+                    <img src="{%static 'short_3.jpg' %}" class="food-img" alt="">
+                    <div class="img-text">
+                        <h1>Breakfast</h1>
+                    </div>
+                    <div class="img-footer">
+                        <div class="footer-icon">
+                            <i class="fas fa-dollar-sign">25</i>
+                        </div>
+                        <div class="footer-btn">
+                            <button type="button" class="food-btn">Order Now</button>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="food-card">
+                    <img src="{% static 'short_3.jpg' %}" class="food-img" alt="">
+                    <div class="img-text">
+                        <h1>Lunch</h1>
+                    </div>
+                    <div class="img-footer">
+                        <div class="footer-icon">
+                            <i class="fas fa-dollar-sign">25</i>
+                        </div>
+                        <div class="footer-btn">
+                            <button type="button" class="food-btn">Order Now</button>
+                        </div>
+                    </div>
+                </article>
+                
+
+                <article class="food-card">
+                    <img src="{%static 'short_3.jpg' %}" class="food-img" alt="">
+                    <div class="img-text">
+                        <h1>Dinner</h1>
+                    </div>
+                    <div class="img-footer">
+                        <div class="footer-icon">
+                            <i class="fas fa-dollar-sign">25</i>
+                        </div>
+                        <div class="footer-btn">
+                            <button type="button" class="food-btn">Order Now</button>
+                        </div>
+                    </div>
+                </article>
+                
+
+            </div>
+        </section>-->
+        <!---============================end of card section-======================================-->
+        <!---===============================slider starts=========================================--->
+        <section class="slidermenu">
+            <div>
+                <h2 class="slider-menu"></h2>
+            </div>
+            <div class="slider owl-carousel">
+                <!--<div class="card">--> 
+                <div class="img"><img src="{%static 'images/dine-in1.jpg' %}" alt=""></div>
+                  <!--<div class="content">
+                    <div class="title">Briana Tozour</div>
+                    <div class="sub-title">Graphic Designer</div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit modi dolorem quis quae animi nihil minus sed unde voluptas cumque.</p>
+                    <div class="btn">
+                      <button>Read more</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">-->
+                 <div class="img"><img src="{%static 'images/dine-in2.jpg' %}" alt=""></div>
+                    <!--<div class="content">
+                      <div class="title">Briana Tozour</div>
+                      <div class="sub-title">Graphic Designer</div>
+                      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit modi dolorem quis quae animi nihil minus sed unde voluptas cumque.</p>
+                      <div class="btn">
+                        <button>Read more</button>
+                      </div>
+                    </div>
+                  </div>
+                <div class="card">-->
+                <div class="img"><img src="{%static 'images/dine-in3.jpg' %}" alt=""></div>
+                  <!--<div class="content">
+                    <div class="title">Pricilla Preez</div>
+                    <div class="sub-title">Web Developer</div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit modi dolorem quis quae animi nihil minus sed unde voluptas cumque.</p>
+                    <div class="btn">
+                      <button>Read more</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">-->
+                <div class="img"><img src="{%static 'images/dine-in4.jpg' %}" alt=""></div>
+                  <!--<div class="content">
+                    <div class="title">Eliana Maia</div>
+                    <div class="sub-title">App Developer</div>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit modi dolorem quis quae animi nihil minus sed unde voluptas cumque.</p>
+                    <div class="btn">
+                      <button>Read more</button>
+                    </div>
+                  </div>
+                </div>-->
+                <div class="img"><img src="{%static 'images/dine-in5.jpg' %}" alt=""></div>
+                <div class="img"><img src="{%static 'images/dine-in6.jpg' %}" alt=""></div>
+                <div class="img"><img src="{%static 'images/a.jpg' %}" alt=""></div>
+                <div class="img"><img src="{%static 'images/c2.jpg' %}" alt=""></div>
+                <div class="img"><img src="{%static 'images/d.jpg' %}" alt=""></div>
+              </div>
+        </section>
+        <!---------------------------slider ends----------------------------------->
+
+
+        <!-------------------------start of footer section-------------------------->
+        <footer class="footer">
+            <div class="footer-icons">
+                <p>Lorem ipsum dolor sit amet consectet</p>
+                <p>elIllum nesciunt alias aut totam voluptates ipsum dolor vhv</p>
+                <p>iste odio eaque enim alias bl<p>
+                <a href="#"><i class="fab fa-facebook facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube youtube"></i></a>
+                <a href="#"><i class="fab fa-twitter twitter"></i></a>
+            </div>
+            <div class="section-center">
+                <p class="footer-text">
+                    &copy;<span>SpiceKafee</span>
+                </p>
+            </div>
+        </footer>
+        <!---------------------end of footer section--------------------->
+
+    </body>
+    <script>
+        const logo = document.querySelectorAll('#logo1 path');
+        for(let i=0; i< logo.length; i++){
+            console.log('Letter ${i} is ${logo[i].getTotalLength()}');
+        }
+        const hamburger =  document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const links = document.querySelectorAll('.nav-links li');
+
+        hamburger.addEventListener('click', ()=>{
+            navLinks.classList.toggle('open');
+            links.forEach(links=>{
+                links.classList.toggle('fade');
+            });
+        });
+        $(".slider").owlCarousel({
+        loop: true,
+        autoplay: true,
+        autoplayTimeout: 2000, //2000ms = 2s;
+        autoplayHoverPause: true,
+        });
+    </script>
+    </html>

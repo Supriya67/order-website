@@ -1,0 +1,160 @@
+{% load cart %}
+
+{% load static %}
+
+{% load custom_filter %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/91018170e9.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{% static 'menu.css' %}">
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <title>SpiceKafee</title>
+    </head>
+    <style>
+        .cart_button{
+            color:orange;
+            border:2px solid orange
+        }
+        .cart_button:hover{
+            color:white;
+            background:orange;
+            border:orange;
+        }
+        .cart_length{
+        color:orange;
+        background:white;
+        padding:0px 5px;
+        margin:5px;
+        font-size:16px;
+        font-weight:bolder;
+        }
+    </style>
+    <body>
+        <!--==================================== navbar =============================-->
+        <nav class="nav">
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'product' %}">Menu</a></li>
+                <li><a href="{% url 'carts' %}">Cart</a>
+                    {% if request.session.cart.keys|length > 0%}
+                    <span class="cart_length">{{request.session.cart.keys|length}}</span>
+                    {% endif %}
+                </li>
+                {% if request.session.user_id %}
+                <li><a href="#">hello {{request.session.username}}!!</a></li>
+                <li><a href="{% url 'order' %}">Orders</a></li>
+                <li><a href="{% url 'signout' %}">Sign Out</a></li>
+                {% else %}
+                <li><a href="{% url 'signin' %}">Sign in</a></li>
+                <li><a href="{% url 'signup' %}">sign up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!--==================================== navbar ends=============================-->
+
+
+        <div class="container">
+            <p class="display-4 pl-4 ml-4">Your Orders</p>
+            <div class="border rounded p-4 m-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sno.</th>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Date</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in order %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td><img style="height: 100px;" class="square" src="{{i.product.image.url}}" alt=""></td>
+                        <td>{{i.product.name}}</td>
+                        <td>{{i.date}}</td>
+                        <td>{{i.price|currency}}</td>
+                        <td>{{i.quantity}}</td>
+                        <td>{{i.quantity|multiply:i.price|currency}}</td>
+                        {% if i.status %}
+                        <td><small class="badge badge-success">Completed</small></td>
+                        {% else %}
+                        <td><small class="badge badge-warning">Pending</small></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+            </table>
+            </div>
+        </div>
+
+
+    </body>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+    <script>
+        const hamburger =  document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const links = document.querySelectorAll('.nav-links li');
+
+        hamburger.addEventListener('click', ()=>{
+            navLinks.classList.toggle('open');
+            links.forEach(links=>{
+                links.classList.toggle('fade');
+            });
+        });
+
+
+        const text = document.querySelector(".t-a-3");
+        const strText = text.textContent;
+        const splitText = strText.split("");
+        text.textContent="";
+        for(let i =0; i<splitText.length; i++)
+        {
+            text.innerHTML += "<span>" + splitText[i] + "</span>";
+        }
+        let char=0;
+        let timer = setInterval(onTick, 50);
+        function onTick()
+        {
+            const span = text.querySelectorAll('span')[char];
+            span.classList.add('fade');
+            char++;
+            if(char === splitText.length)
+            {
+                complete();
+                return;
+            }
+        }
+        function complete()
+        {
+            setInterval(timer);
+            timer=50;
+        }
+    </script>
+</html>
+

@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SignIn</title>
+        <link rel="stylesheet" href="{% static 'signin.css' %}">
+    </head>
+    <style>
+        .cart_length{
+        color:orange;
+        background:white;
+        padding:0px 5px;
+        margin:5px;
+        font-size:16px;
+        font-weight:bolder;
+        }
+    </style>
+    <body>
+        <video autoplay muted loop id="myVideo">
+            <source src="video4.mp4" type="video/mp4">
+          </video>
+        <button id="btn">☰</button>
+        <nav id="nav">
+            <ul>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'product' %}">Menu</a></li>
+                <li><a href="{% url 'carts' %}">Cart</a>
+                    {% if request.session.cart.keys|length > 0%}
+                    <span class="cart_length">{{request.session.cart.keys|length}}</span>
+                    {% endif %}
+                </li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            </ul>
+        </nav>
+        <form action="signin" method="POST">
+        {% csrf_token %}ni se
+        <div class="login-box">
+            <h1>Login</h1>
+            {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                <h1>{{error_msg}}</h1>
+            </div>
+            {% endif %}
+            <div class="textbox">
+              <i class="fas fa-user"></i>
+              <input type="text" name="username" placeholder="Username" required>
+            </div>
+          
+            <div class="textbox">
+              <i class="fas fa-lock"></i>
+              <input type="password"  name="password" placeholder="Password" required>
+            </div>
+            <input type="submit" class="btn" value="Sign in">
+        </div>
+    </form>
+
+    </body>
+    <script>
+
+        const btn = document.getElementById("btn");
+        const nav = document.getElementById("nav");
+
+        btn.addEventListener("click", () => {
+        nav.classList.toggle("active");
+        btn.classList.toggle("active");
+        });
+
+
+        function createHeart() 
+        {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+    
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+        
+        heart.innerText = "🍲";
+
+    
+        document.body.appendChild(heart);
+    
+        setTimeout(() => {
+            heart.remove();
+        }, 5000);
+        }
+        setInterval(createHeart, 300);
+    </script>
+</html>
