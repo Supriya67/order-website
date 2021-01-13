@@ -56,7 +56,7 @@
                 </li>
                 {% if request.session.user_id %}
                 <li><a href="#">hello {{request.session.username}}!!</a></li>
-                <li><a href="{% url 'signout' %}">Orders</a></li>
+                <li><a href="{% url 'order' %}">Orders</a></li>
                 <li><a href="{% url 'signout' %}">Sign Out</a></li>
                 {% else %}
                 <li><a href="{% url 'signin' %}">Sign in</a></li>
