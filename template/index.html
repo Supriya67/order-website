@@ -38,7 +38,7 @@
             </div>
             <ul class="nav-links">
                 <li><a href="{% url 'index' %}">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#menu">About</a></li>
                 <li><a href="{% url 'product' %}">Menu</a></li>
                 <li><a href="{% url 'carts' %}">Cart</a>
                     {% if request.session.cart.keys|length > 0%}
@@ -191,7 +191,7 @@
 </section>
         <!---=======================================================our specilality ends==========================================================-->
         <!----======================================================menu bar starts===============================================================-->
-        <section class="menu" id="menu about">
+        <section class="menu" id="menu">
             <article class="menu-image">
                 <video id="videoBG" poster="{%static 'images/dine-in2.jpg' %}" autoplay muted loop>
                     <source src="{%static 'videos/video5.mp4' %}" type="video/mp4">
